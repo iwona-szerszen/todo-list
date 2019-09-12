@@ -10,12 +10,18 @@ import { TodoListService } from '../services/todo-list.service';
 
       <ul>
         <li *ngFor="let todoItem of todoList">
-          <app-todo-item
+          <app-todo-item *ngIf="!todoItem.isBeingEdited"
             [item]="todoItem"
             (remove)="removeItem($event)"
             (update)="updateItem($event.item, $event.changes)"
           >
           </app-todo-item>
+
+          <app-input-button-unit *ngIf="todoItem.isBeingEdited" class="edit-input-btn-unit"
+            [title]="todoItem.title"
+            (submit)="updateItem(todoItem, {title: ($event), isBeingEdited: false})">
+          </app-input-button-unit>
+
         </li>
       </ul>
     </div>

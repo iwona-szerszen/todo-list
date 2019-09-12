@@ -10,9 +10,14 @@ import { TodoItem } from '../interfaces/todo-item';
         class="todo-checkbox"
         (click)="completeItem()"
       />
+
       <span class="todo-title" [ngClass]="{'todo-complete': item.completed}">
         {{ item.title }}
       </span>
+
+      <button class="btn btn-edit" (click)="editItem()">
+        edit
+      </button>
 
       <button class="btn btn-red" (click)="removeItem()">
         remove
@@ -40,6 +45,13 @@ export class TodoItemComponent implements OnInit {
     this.update.emit({
       item: this.item,
       changes: {completed: !this.item.completed}
+    });
+  }
+
+  editItem() {
+    this.update.emit({
+      item: this.item,
+      changes: {isBeingEdited: true}
     });
   }
 }
