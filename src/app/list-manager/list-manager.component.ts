@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { TodoItem } from '../interfaces/todo-item';
 import { TodoListService } from '../services/todo-list.service';
 
@@ -8,8 +9,8 @@ import { TodoListService } from '../services/todo-list.service';
     <div class="todo-app">
       <app-input-button-unit (submit)="addItem($event)"></app-input-button-unit>
 
-      <ul>
-        <li *ngFor="let todoItem of todoList">
+      <ul *ngIf="todoList | async as todoItems">
+        <li *ngFor="let todoItem of todoItems">
           <app-todo-item *ngIf="!todoItem.isBeingEdited"
             [item]="todoItem"
             (remove)="removeItem($event)"
@@ -30,7 +31,7 @@ import { TodoListService } from '../services/todo-list.service';
 })
 export class ListManagerComponent implements OnInit {
 
-  todoList: TodoItem[];
+  todoList: Observable<TodoItem[]>;
 
   constructor(private todoListService: TodoListService) { }
 

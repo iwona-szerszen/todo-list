@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { InputButtonUnitComponent } from './input-button-unit/input-button-unit.component';
@@ -16,9 +17,10 @@ import { TodoListService } from './services/todo-list.service';
     ListManagerComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule
   ],
-  providers: [TodoListService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

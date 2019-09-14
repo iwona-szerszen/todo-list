@@ -1,51 +1,53 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs';
 import { TodoItem } from '../interfaces/todo-item';
 import { StorageService } from './storage.service';
-
-const todoListStorageKey = 'Todo_List';
-
-const defaultTodoList = [
-  {title: 'install NodeJS'},
-  {title: 'install Angular CLI'},
-  {title: 'create new app'},
-  {title: 'serve app'},
-  {title: 'develop app'},
-  {title: 'deploy app'},
-];
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoListService {
 
-  todoList: TodoItem[];
+  private todoListSubject: Subject<TodoItem[]> = new Subject<TodoItem[]>();
+  private headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-  constructor(private storageService: StorageService) {
-    this.todoList = storageService.getData(todoListStorageKey) || defaultTodoList;
+  constructor(private storageService: StorageService, private http: HttpClient) {
+    this.retrieveListFromDataBase();
    }
 
-  saveList() {
-    this.storageService.setData(todoListStorageKey, this.todoList);
+  retrieveListFromDataBase() {
+    this.http.get<TodoItem[]>('http://localhost:3000/items').subscribe(
+      response => this.todoListSubject.next(response)
+    );
   }
 
   getTodoList() {
-    return this.todoList;
+    return this.todoListSubject.asObservable();
   }
 
   addItem(item: TodoItem) {
-    this.todoList.push(item);
-    this.saveList();
+    this.http.post('http://localhost:3000/items',
+      JSON.stringify({
+        title: item.title,
+        completed: item.completed || false,
+        isBeingEdited: item.isBeingEdited || false
+      }),
+      {headers: this.headers}).subscribe(
+      () => this.retrieveListFromDataBase()
+    );
   }
 
   updateItem(item: TodoItem, changes) {
-    const index = this.todoList.indexOf(item);
-    this.todoList[index] = {...item, ...changes};
-    this.saveList();
+    return this.http.put(`http://localhost:3000/items/${item._id}`,
+      JSON.stringify({...item, ...changes}), {headers: this.headers}).subscribe(
+        () => this.retrieveListFromDataBase()
+      );
   }
 
   deleteItem(item: TodoItem) {
-    const index = this.todoList.indexOf(item);
-    this.todoList.splice(index, 1);
-    this.saveList();
+    return this.http.delete(`http://localhost:3000/items/${item._id}`).subscribe(
+      () => this.retrieveListFromDataBase()
+    );
   }
 }
