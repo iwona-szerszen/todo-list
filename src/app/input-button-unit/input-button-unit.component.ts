@@ -10,7 +10,8 @@ import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
         (keyup.enter)="submitValue($event.target.value)"
       >
       <button
-        class="btn"
+        mat-raised-button
+        color="primary"
         (click)="submitValue(inputElementRef.value)"
       >
         Save

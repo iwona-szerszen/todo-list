@@ -15,7 +15,7 @@ import { TodoItem } from '../interfaces/todo-item';
         {{ item.title }}
       </span>
 
-      <button class="btn btn-edit" (click)="editItem()">
+      <button class="btn btn-edit" (click)="setEditMode()">
         edit
       </button>
 
@@ -31,6 +31,7 @@ export class TodoItemComponent implements OnInit {
   @Input() item: TodoItem;
   @Output() remove: EventEmitter<TodoItem> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
+  @Output() editMode: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
 
@@ -48,10 +49,10 @@ export class TodoItemComponent implements OnInit {
     });
   }
 
-  editItem() {
-    this.update.emit({
-      item: this.item,
-      changes: {isBeingEdited: true}
+  setEditMode() {
+    this.editMode.emit({
+      //item: this.item,
+      //changes: {isBeingEdited: true}
     });
   }
 }

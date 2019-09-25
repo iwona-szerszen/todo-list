@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { TodoItem } from '../interfaces/todo-item';
 import { TodoListService } from '../services/todo-list.service';
 
@@ -9,18 +9,29 @@ import { TodoListService } from '../services/todo-list.service';
     <div class="todo-app">
       <app-input-button-unit (submit)="addItem($event)"></app-input-button-unit>
 
-      <ul *ngIf="todoList | async as todoItems">
-        <li *ngFor="let todoItem of todoItems">
-          <app-todo-item *ngIf="!todoItem.isBeingEdited"
+      <ul *ngIf="todoList">
+        <li *ngFor="let todoItem of todoList; let index = index">
+          <app-todo-item
+            *ngIf="!todoItem.isBeingEdited"
             [item]="todoItem"
             (remove)="removeItem($event)"
             (update)="updateItem($event.item, $event.changes)"
+            (editMode)="setEditMode(index)"
           >
           </app-todo-item>
 
-          <app-input-button-unit *ngIf="todoItem.isBeingEdited" class="edit-input-btn-unit"
+          <app-input-button-unit
+            *ngIf="todoItem.isBeingEdited"
+            class="edit-input-btn-unit"
             [title]="todoItem.title"
-            (submit)="updateItem(todoItem, {title: ($event), isBeingEdited: false})">
+            (submit)="
+              changeTitle(
+                todoItem,
+                { title: $event, isBeingEdited: false},
+                index
+              )
+            "
+          >
           </app-input-button-unit>
 
         </li>
@@ -31,23 +42,35 @@ import { TodoListService } from '../services/todo-list.service';
 })
 export class ListManagerComponent implements OnInit {
 
-  todoList: Observable<TodoItem[]>;
+  todoList: TodoItem[];
+  todoListSubscription: Subscription;
 
-  constructor(private todoListService: TodoListService) { }
+  constructor(private todoListService: TodoListService) {}
 
   ngOnInit() {
-    this.todoList = this.todoListService.getTodoList();
+    this.todoListSubscription = this.todoListService
+      .getTodoList()
+      .subscribe(value => (this.todoList = value));
   }
 
   addItem(title: string) {
     this.todoListService.addItem({ title });
   }
 
-  removeItem(item) {
-    this.todoListService.deleteItem(item);
+  setEditMode(index) {
+    this.todoList[index].isBeingEdited = true;
+  }
+
+  changeTitle(item, changes, index) {
+    this.todoList[index].isBeingEdited = false;
+    this.todoListService.updateItem(item, changes);
   }
 
   updateItem(item, changes) {
     this.todoListService.updateItem(item, changes);
+  }
+
+  removeItem(item) {
+    this.todoListService.deleteItem(item);
   }
 }
