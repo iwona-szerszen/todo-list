@@ -51,8 +51,8 @@ export class TodoItemComponent implements OnInit {
 
   setEditMode() {
     this.editMode.emit({
-      //item: this.item,
-      //changes: {isBeingEdited: true}
+      item: this.item,
+      changes: {isBeingEdited: true}
     });
   }
 }
