@@ -1,38 +1,49 @@
 import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-input-button-unit',
   template: `
-      <input
-        class="todo-input"
-        #inputElementRef
-        [value]="title"
-        (keyup.enter)="submitValue($event.target.value)"
-      >
+    <h3>Example of template-driven form</h3>
+    <form #itemForm="ngForm" (ngSubmit)="submitValue(itemForm)">
+      <div class="form-group">
+        <input
+          class="todo-input form-control"
+          name="title"
+          [(ngModel)]="title"
+          required
+          matInput
+        >
+      </div>
       <button
         mat-raised-button
         color="primary"
-        (click)="submitValue(inputElementRef.value)"
+        type="submit"
       >
         Save
       </button>
+    </form>
   `,
   styleUrls: ['./input-button-unit.component.css']
 })
 export class InputButtonUnitComponent implements OnInit {
 
-  @Input() title: string;
-  @Output() submit: EventEmitter<string> = new EventEmitter();
+  @Output() submitItem: EventEmitter<string> = new EventEmitter();
 
-  constructor() {
-    this.title = 'Hello World';
-  }
+  title = 'Hello World';
+
+  constructor() {}
 
   ngOnInit() {
   }
 
-  submitValue(newTitle: string) {
-    this.submit.emit(newTitle);
+  submitValue(newTitleForm: NgForm) {
+    if (newTitleForm.valid) {
+      this.submitItem.emit(newTitleForm.value.title);
+      newTitleForm.resetForm();
+    } else {
+      alert('Form is invalid');
+    }
   }
 
 }

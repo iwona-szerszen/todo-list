@@ -7,7 +7,7 @@ import { TodoListService } from '../services/todo-list.service';
   selector: 'app-list-manager',
   template: `
     <div class="todo-app">
-      <app-input-button-unit (submit)="addItem($event)"></app-input-button-unit>
+      <app-input-button-unit (submitItem)="addItem($event)"></app-input-button-unit>
 
       <ul *ngIf="todoList">
         <li *ngFor="let todoItem of todoList; let index = index">

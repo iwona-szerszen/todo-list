@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NgForm, FormBuilder, FormArray } from '@angular/forms';
+import { FormControl, FormGroup, NgForm, FormBuilder, FormArray, Validators } from '@angular/forms';
 
 interface User {
   firstName: string;
@@ -15,6 +15,7 @@ interface User {
 @Component({
   selector: 'app-user-info',
   template: `
+  <h3>Example of reactive form</h3>
     <form [formGroup]="userFormGroup" #userForm="ngForm" (ngSubmit)="onSubmit(userForm)">
       <mat-form-field>
         <input type="text" formControlName="firstName" matInput placeholder="first name" required>
@@ -23,7 +24,7 @@ interface User {
         <input type="text" formControlName="lastName" matInput placeholder="last name" required>
       </mat-form-field>
       <mat-form-field>
-        <input type="email" formControlName="email" matInput placeholder="email">
+        <input type="email" formControlName="email" matInput placeholder="email" required>
       </mat-form-field>
       <mat-form-field>
         <input type="text" formControlName="phone" matInput placeholder="phone">
@@ -67,6 +68,11 @@ interface User {
           <mat-icon>edit</mat-icon>
         </button>
       </p>
+      <p>Email: {{ gatheredUserInfo.email }}
+        <button mat-icon-button (click)="editField('email')">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </p>
     </div>
     <button type="button" mat-raised-button color="accent" (click)="fillDefault()">Fill default</button>
   `,
@@ -75,13 +81,14 @@ interface User {
 export class UserInfoComponent implements OnInit {
 
   gatheredUserInfo: User;
-  testFirstName = 'Iwo';
-  testLastName = 'Szerszen';
+  defaultFirstName = 'Iwona';
+  defaultLastName = 'Szerszen';
+  defaultEmail = 'my.email@gmail.com';
 
   userFormGroup = this.formBuilder.group({
     firstName: [''],
     lastName: [''],
-    email: [''],
+    email: ['', Validators.email],
     phone: [''],
     hobby: [''],
     bestFriendName: [''],
@@ -101,8 +108,9 @@ export class UserInfoComponent implements OnInit {
 
   fillDefault() {
     this.userFormGroup.patchValue({
-      firstName: this.testFirstName,
-      lastName: this.testLastName
+      firstName: this.defaultFirstName,
+      lastName: this.defaultLastName,
+      email: this.defaultEmail
     });
   }
 
