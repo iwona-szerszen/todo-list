@@ -8,6 +8,7 @@ import { Component } from '@angular/core';
     </h1>
 
     <app-list-manager></app-list-manager>
+    <app-user-info></app-user-info>
   `,
   styleUrls: ['./app.component.css']
 })
